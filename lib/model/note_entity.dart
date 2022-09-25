@@ -4,14 +4,14 @@ class NoteEntity {
   final int? id;
   final String title;
   final String createdAt;
-  final String lastEdit;
+  final String lastEditAt;
   final String content;
 
   NoteEntity({
     this.id,
     required this.title,
     required this.createdAt,
-    required this.lastEdit,
+    required this.lastEditAt,
     required this.content,
   });
 
@@ -19,7 +19,7 @@ class NoteEntity {
         id: json["id"] as int,
         title: json["title"] as String,
         createdAt: json["createdAt"] as String,
-        lastEdit: json["lastEdit"] as String,
+        lastEditAt: json["lastEditAt"] as String,
         content: json["content"] as String,
       );
 
@@ -27,7 +27,7 @@ class NoteEntity {
         "id": id,
         "title": title,
         "createdAt": createdAt,
-        "lastEdit": lastEdit,
+        "lastEditAt": lastEditAt,
         "content": content,
       };
 
@@ -35,13 +35,13 @@ class NoteEntity {
     int? id,
     String? title,
     String? createdAt,
-    String? lastEdit,
+    String? lastEditAt,
     String? content,
   }) => NoteEntity(
       id: id ?? this.id,
       title: title ?? this.title,
       createdAt: createdAt ?? this.createdAt,
-      lastEdit: lastEdit ?? this.lastEdit,
+      lastEditAt: lastEditAt ?? this.lastEditAt,
       content: content ?? this.content,
     );
 }

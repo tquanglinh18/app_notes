@@ -3,13 +3,13 @@ class NoteFields {
     id,
     title,
     createdAt,
-    lastEdit,
+    lastEditAt,
     content,
   ];
 
   static const String id = 'id';
   static const String title = 'title';
   static const String createdAt = 'createdAt';
-  static const String lastEdit = 'lastEdit';
+  static const String lastEditAt = 'lastEditAt';
   static const String content = 'content';
 }

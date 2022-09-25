@@ -1,5 +1,5 @@
 import 'package:app_note_sqflite/model/note_entity.dart';
-import 'package:app_note_sqflite/notes_provider.dart';
+import 'package:app_note_sqflite/ui/page/detail/detail_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -11,7 +11,7 @@ class DetailPage extends StatefulWidget {
   final int id;
   final String title;
   final String createdAt;
-  final String lastEdit;
+  final String lastEditAt;
   final String content;
 
   const DetailPage({
@@ -19,7 +19,7 @@ class DetailPage extends StatefulWidget {
     required this.id,
     required this.title,
     required this.createdAt,
-    required this.lastEdit,
+    required this.lastEditAt,
     required this.content,
   }) : super(key: key);
 
@@ -29,82 +29,40 @@ class DetailPage extends StatefulWidget {
 
 class _DetailPageState extends State<DetailPage> {
   late TextEditingController contentController;
+  late TextEditingController titleController;
 
   @override
   void initState() {
+    titleController = TextEditingController(text: widget.title);
     contentController = TextEditingController(text: widget.content);
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<NotesProvider>(
-      create: (_) => NotesProvider(),
+    return ChangeNotifierProvider<DetailProvider>(
+      create: (_) => DetailProvider(),
       child: Scaffold(
         body: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: Stack(
             children: [
-              Consumer<NotesProvider>(
-                builder: (context, notesProvider, child) {
+              Consumer<DetailProvider>(
+                builder: (context, detailProvider, child) {
                   return Padding(
-                    padding: EdgeInsets.fromLTRB(20, 10 + MediaQuery.of(context).padding.top, 20, 20),
+                    padding: EdgeInsets.fromLTRB(20, 10 + MediaQuery.of(context).padding.top, 20, 150),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          widget.title,
-                          style: const TextStyle(
-                            fontSize: 24,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
+                        _titleField,
                         const SizedBox(height: 24),
-                        Text(
-                          widget.createdAt,
-                          style: const TextStyle(
-                            color: AppColors.timeTextColor,
-                            fontWeight: FontWeight.w400,
-                            fontSize: 12,
-                          ),
-                        ),
+                        _createAt,
+                        _lastEditAt,
                         const SizedBox(height: 24),
                         Expanded(
-                          child: TextField(
-                            controller: contentController,
-                            minLines: 1,
-                            maxLines: null,
-                            enabled: notesProvider.editText,
-                            decoration: const InputDecoration(
-                              hintText: "Enter Your Text...",
-                              hintStyle: TextStyle(
-                                fontWeight: FontWeight.w400,
-                                fontSize: 14,
-                                height: 2.1,
-                                color: Colors.grey,
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                              disabledBorder: OutlineInputBorder(
-                                borderSide: BorderSide(
-                                  color: Colors.transparent,
-                                ),
-                              ),
-                            ),
-                            style: const TextStyle(
-                              fontWeight: FontWeight.w400,
-                              fontSize: 14,
-                              height: 2.1,
-                            ),
+                          child: SingleChildScrollView(
+                            child: _contentField,
                           ),
                         ),
                       ],
@@ -125,9 +83,108 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
+  Widget get _titleField {
+    return Consumer<DetailProvider>(
+      builder: (context, detailProvider, child) {
+        return TextField(
+          controller: titleController,
+          enabled: detailProvider.isEnableTextField,
+          decoration: const InputDecoration(
+            contentPadding: EdgeInsets.zero,
+            hintStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          style: const TextStyle(
+            fontSize: 24,
+            fontWeight: FontWeight.w700,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget get _createAt {
+    return Text(
+      "CreateAt: ${widget.createdAt}",
+      style: const TextStyle(
+        color: AppColors.timeTextColor,
+        fontWeight: FontWeight.w400,
+        fontSize: 12,
+      ),
+    );
+  }
+
+  Widget get _lastEditAt {
+    return Text(
+      "LastEditAt: ${widget.lastEditAt}",
+      style: const TextStyle(
+        color: AppColors.timeTextColor,
+        fontWeight: FontWeight.w400,
+        fontSize: 12,
+      ),
+    );
+  }
+
+  Widget get _contentField {
+    return Consumer<DetailProvider>(
+      builder: (context, detailProvider, child) {
+        return TextField(
+          controller: contentController,
+          minLines: 1,
+          maxLines: null,
+          enabled: detailProvider.isEnableTextField,
+          decoration: const InputDecoration(
+            hintStyle: TextStyle(
+              fontWeight: FontWeight.w400,
+              fontSize: 14,
+              color: Colors.grey,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.transparent,
+              ),
+            ),
+          ),
+          style: const TextStyle(
+            fontWeight: FontWeight.w400,
+            fontSize: 14,
+          ),
+        );
+      },
+    );
+  }
+
   Widget get _optionNote {
-    return Consumer<NotesProvider>(
-      builder: (context, notesProvider, child) {
+    return Consumer<DetailProvider>(
+      builder: (context, detailProvider, child) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
@@ -137,38 +194,70 @@ class _DetailPageState extends State<DetailPage> {
                 Navigator.of(context).pop();
               },
             ),
-            Row(
-              children: [
-                Visibility(
-                  visible: !notesProvider.enabledEdit,
-                  child: AppButtons(
-                    urlBtn: AppImages.btnDelete,
-                    onTap: () {
-                      notesProvider.confirmDeleteDetailPage();
-                    },
-                  ),
-                ),
-                const SizedBox(width: 20),
-                Visibility(
-                  child: AppButtons(
-                    urlBtn: notesProvider.enabledEdit ? AppImages.btnSaveActive : AppImages.btnEdit,
-                    onTap: () {
-                      // if(notesProvider.editText){
-                      //   NoteEntity note = NoteEntity(
-                      //     title: widget.title,
-                      //     createdAt: widget.createdAt,
-                      //     lastEdit: DateTime.now().toString().split(' ').first,
-                      //     content: contentController.text,
-                      //   );
-                      //   notesProvider.updateNote(note);
-                      // }
-                      // else{
-                      //   notesProvider.editingText();
-                      // }
-                    },
-                  ),
-                ),
-              ],
+            !detailProvider.isConfirmDelete ? _optionDeleteOrEdit() : _confirmDelete(),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _optionDeleteOrEdit() {
+    return Consumer<DetailProvider>(
+      builder: (context, detailProvider, child) {
+        return Row(
+          children: [
+            Visibility(
+              visible: !detailProvider.isEnableTextField,
+              child: AppButtons(
+                urlBtn: AppImages.btnDelete,
+                onTap: () {
+                  detailProvider.confirmDelete();
+                },
+              ),
+            ),
+            const SizedBox(width: 20),
+            AppButtons(
+              urlBtn: detailProvider.isEnableTextField ? AppImages.btnSaveActive : AppImages.btnEdit,
+              onTap: () async {
+                NoteEntity note = NoteEntity(
+                  id: widget.id,
+                  title: titleController.text,
+                  createdAt: widget.createdAt,
+                  lastEditAt: DateTime.now().toString().split('.').first,
+                  content: contentController.text,
+                );
+                if (detailProvider.isEnableTextField) {
+                  await detailProvider.updateNote(note);
+                  detailProvider.enableTextField();
+                } else {
+                  detailProvider.enableTextField();
+                }
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _confirmDelete() {
+    return Consumer<DetailProvider>(
+      builder: (context, detailProvider, child) {
+        return Row(
+          children: [
+            AppButtons(
+              urlBtn: AppImages.btnClose,
+              onTap: () {
+                detailProvider.confirmDelete();
+              },
+            ),
+            const SizedBox(width: 20),
+            AppButtons(
+              urlBtn: AppImages.btnConfirm,
+              onTap: () async {
+                detailProvider.deleteNote(widget.id);
+                Navigator.of(context).pop();
+              },
             ),
           ],
         );

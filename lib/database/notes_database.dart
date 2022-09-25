@@ -37,7 +37,7 @@ CREATE TABLE $tableNotes (
   ${NoteFields.id} $idType, 
   ${NoteFields.title} $titleType,
   ${NoteFields.createdAt} $createdAtType,
-  ${NoteFields.lastEdit} $lastEditType,
+  ${NoteFields.lastEditAt} $lastEditType,
   ${NoteFields.content} $contentType
   )
 ''');
