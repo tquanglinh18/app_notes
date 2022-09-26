@@ -47,7 +47,7 @@ class DxFlushBar {
       message: message != ""
           ? message
           : title == ""
-          ? "Hệ thông lỗi!"
+          ? "Hệ thống lỗi!"
           : title,
       duration: Duration(seconds: duration),
       flushbarPosition: position,

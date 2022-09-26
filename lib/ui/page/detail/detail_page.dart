@@ -91,24 +91,20 @@ class _DetailPageState extends State<DetailPage> {
         return TextField(
           controller: titleController,
           enabled: detailProvider.isEnableTextField,
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             contentPadding: EdgeInsets.zero,
-            hintStyle: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-            enabledBorder: OutlineInputBorder(
+            hintStyle: AppTextStyle.greyHintS14,
+            enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
             ),
-            focusedBorder: OutlineInputBorder(
+            focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
             ),
-            disabledBorder: OutlineInputBorder(
+            disabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
@@ -123,11 +119,7 @@ class _DetailPageState extends State<DetailPage> {
   Widget get _lastEditAt {
     return Text(
       DateFormat('d MMM yyyy HH:mm').format(widget.lastEditAt),
-      style: const TextStyle(
-        color: AppColors.timeTextColor,
-        fontWeight: FontWeight.w400,
-        fontSize: 12,
-      ),
+      style: AppTextStyle.lightPlaceholderS12,
     );
   }
 
@@ -139,29 +131,25 @@ class _DetailPageState extends State<DetailPage> {
           minLines: 1,
           maxLines: null,
           enabled: detailProvider.isEnableTextField,
-          decoration: const InputDecoration(
-            hintStyle: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-            enabledBorder: OutlineInputBorder(
+          decoration: InputDecoration(
+            hintStyle: AppTextStyle.greyHintS14,
+            enabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
             ),
-            focusedBorder: OutlineInputBorder(
+            focusedBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
             ),
-            disabledBorder: OutlineInputBorder(
+            disabledBorder: const OutlineInputBorder(
               borderSide: BorderSide(
                 color: Colors.transparent,
               ),
             ),
           ),
-          style: AppTextStyle.blackS24Bold,
+          style: AppTextStyle.black,
         );
       },
     );
@@ -214,7 +202,11 @@ class _DetailPageState extends State<DetailPage> {
                 if (detailProvider.isEnableTextField) {
                   await detailProvider.updateNote(note).then(
                     (value) {
-                      DxFlushBar.showFlushBar(context, type: FlushBarType.SUCCESS, title: "Sửa thành công!");
+                      DxFlushBar.showFlushBar(
+                        context,
+                        type: FlushBarType.SUCCESS,
+                        title: "Sửa thành công!",
+                      );
                     },
                   );
                   detailProvider.enableTextField();
@@ -244,9 +236,15 @@ class _DetailPageState extends State<DetailPage> {
             AppButtons(
               urlBtn: AppImages.btnConfirm,
               onTap: () async {
-                detailProvider.deleteNote(widget.id).then((value) {
-                  DxFlushBar.showFlushBar(context, type: FlushBarType.SUCCESS, title: "Xoá thành công!");
-                });
+                detailProvider.deleteNote(widget.id).then(
+                  (value) {
+                    DxFlushBar.showFlushBar(
+                      context,
+                      type: FlushBarType.SUCCESS,
+                      title: "Xoá thành công!",
+                    );
+                  },
+                );
                 Navigator.of(context).pop();
               },
             ),

@@ -6,7 +6,6 @@ class AppTextStyle {
   /// Black
   static const black = TextStyle(color: Colors.black);
 
-
   static TextStyle blackS36Bold = black.copyWith(
     fontSize: 36,
     fontWeight: FontWeight.bold,
@@ -27,21 +26,16 @@ class AppTextStyle {
   static const lightPlaceholder = TextStyle(color: AppColors.lightPlaceholder);
 
   //S12
-  static TextStyle lightPlaceholderS12 = lightPlaceholder.copyWith(
-    fontSize: 12
-  );
+  static TextStyle lightPlaceholderS12 = lightPlaceholder.copyWith(fontSize: 12);
 
   //S14
-  static TextStyle lightPlaceholderS14 = lightPlaceholder.copyWith(
-    fontSize: 14
-  );
+  static TextStyle lightPlaceholderS14 = lightPlaceholder.copyWith(fontSize: 14);
 
   //S24 Bold
   static TextStyle lightPlaceholderS24Bold = lightPlaceholder.copyWith(
     fontSize: 24,
     fontWeight: FontWeight.bold,
   );
-
 
   /// Red Accent
   static const redAccent = TextStyle(color: AppColors.redAccent);
@@ -51,4 +45,10 @@ class AppTextStyle {
     fontSize: 18,
     fontWeight: FontWeight.w500,
   );
+
+  /// Grey HintText
+  static const greyHint = TextStyle(color: Colors.grey);
+
+  // s14
+  static TextStyle greyHintS14 = greyHint.copyWith(fontSize: 14);
 }

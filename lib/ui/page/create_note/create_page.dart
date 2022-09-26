@@ -144,7 +144,11 @@ class _CreateNotePageState extends State<CreateNotePage> {
             );
             createProvider.createNote(note).then(
               (value) {
-                DxFlushBar.showFlushBar(context, type: FlushBarType.SUCCESS, title: "Thêm thành công!");
+                DxFlushBar.showFlushBar(
+                  context,
+                  type: FlushBarType.SUCCESS,
+                  title: "Thêm thành công!",
+                );
               },
             );
             Navigator.of(context).pop();
