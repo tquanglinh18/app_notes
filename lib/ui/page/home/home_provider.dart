@@ -10,6 +10,8 @@ class HomeProvider with ChangeNotifier {
 
   bool isSelectedConfirmDelete = false;
 
+  String keyWord = '';
+
   List<NoteEntity> listNote = [];
 
   showDelete() {
@@ -22,21 +24,31 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getListNote({String? keyWord}) async {
+  saveKeyWord(String key) {
+    keyWord = key;
+    notifyListeners();
+  }
+
+  getListNote() async {
     await NotesDatabase.instance.readAllNotes().then(
       (value) {
-        if ((keyWord ?? "").isNotEmpty) {
-          listNote = value.where((element) => element.title.contains(keyWord ?? '')).toList();
+        if ((keyWord).isNotEmpty) {
+          listNote = value.where((element) => element.title.startsWith(keyWord)).toList();
         } else {
           listNote = value;
         }
       },
     );
+    listNote.sort(
+      (a, b) {
+        return b.lastEditAt.compareTo(a.lastEditAt);
+      },
+    );
     notifyListeners();
   }
 
-  deleteNote(int id) async {
-    await NotesDatabase.instance.delete(id);
+  Future deleteNote(int id) async {
+    await NotesDatabase.instance.deleteNote(id);
     notifyListeners();
   }
 }

@@ -1,4 +1,4 @@
-class NoteFields {
+class NotesProperties {
   static final List<String> values = [
     id,
     title,

@@ -52,9 +52,13 @@ class _HomePageState extends State<HomePage> {
                   Expanded(
                     child: Consumer<HomeProvider>(
                       builder: (context, homeProvider, child) {
-                        homeProvider.getListNote(keyWord: textController.text);
+                        homeProvider.getListNote();
                         List<NoteEntity> listNotes = homeProvider.listNote;
-                        return homeProvider.listNote.isNotEmpty ? _notEmptyData(listNotes) : _emptyData;
+                        return homeProvider.listNote.isNotEmpty
+                            ? _notEmptyData(listNotes)
+                            : homeProvider.keyWord.isEmpty
+                                ? _emptyData
+                                : _emptySearch;
                       },
                     ),
                   )
@@ -82,9 +86,9 @@ class _HomePageState extends State<HomePage> {
               id: listNotes[index].id ?? 0,
               title: listNotes[index].title,
               createdAt: listNotes[index].createdAt,
-              lastEdit: listNotes[index].lastEditAt,
+              lastEditAt: listNotes[index].lastEditAt,
               content: listNotes[index].content,
-              isSelectedConfirmDelete: false,
+              // indexSelectedConfirmDelete: index,
             ),
           ],
         );
@@ -109,65 +113,72 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
+  Widget get _emptySearch {
+    return const Text(
+      "Không có dữ liệu tìm kiếm :(",
+      style: TextStyle(
+        color: AppColors.redAccent,
+        fontSize: 18,
+        fontWeight: FontWeight.w400,
+      ),
+    );
+  }
+
   Widget get _optionNote {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
         return Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
-            homeProvider.listNote.isNotEmpty
-                ? AppButtons(
-                    urlBtn: homeProvider.enableDelete || homeProvider.confirmDelete
-                        ? AppImages.btnConfirm
-                        : AppImages.btnDelete,
-                    onTap: () {
-                      !homeProvider.confirmDelete
-                          ? homeProvider.showDelete()
-                          : {
-                              homeProvider.showDelete(),
-                              homeProvider.showConfirmDelete(),
-                            };
-                    },
-                  )
-                : const SizedBox(),
+            homeProvider.listNote.isNotEmpty ? _btnDelete : const SizedBox(),
             const SizedBox(width: 20),
-            homeProvider.listNote.isNotEmpty
-                ? Visibility(
-                    visible: !homeProvider.enableDelete,
-                    child: AppButtons(
-                      urlBtn: AppImages.btnAdd,
-                      onTap: () {
-                        Navigator.of(context)
-                            .push(
-                          MaterialPageRoute(
-                            builder: (context) => const CreateNotePage(),
-                          ),
-                        )
-                            .then(
-                          (value) async {
-                            homeProvider.getListNote();
-                          },
-                        );
-                      },
-                    ),
-                  )
-                : AppButtons(
-                    urlBtn: AppImages.btnAdd,
-                    onTap: () {
-                      Navigator.of(context)
-                          .push(
-                        MaterialPageRoute(
-                          builder: (context) => const CreateNotePage(),
-                        ),
-                      )
-                          .then(
-                        (value) async {
-                          homeProvider.getListNote();
-                        },
-                      );
-                    },
-                  ),
+            _btnAdd,
           ],
+        );
+      },
+    );
+  }
+
+  Widget get _btnDelete {
+    return Consumer<HomeProvider>(
+      builder: (context, homeProvider, child) {
+        return AppButtons(
+          urlBtn: homeProvider.enableDelete || homeProvider.confirmDelete ? AppImages.btnConfirm : AppImages.btnDelete,
+          onTap: () {
+            !homeProvider.confirmDelete
+                ? homeProvider.showDelete()
+                : {
+                    homeProvider.showDelete(),
+                    homeProvider.showConfirmDelete(),
+                  };
+          },
+        );
+      },
+    );
+  }
+
+  Widget get _btnAdd {
+    return Consumer<HomeProvider>(
+      builder: (context, homeProvider, child) {
+        return Visibility(
+          visible: !homeProvider.enableDelete || homeProvider.listNote.isEmpty,
+          child: AppButtons(
+            urlBtn: AppImages.btnAdd,
+            onTap: () {
+              Navigator.of(context)
+                  .push(
+                MaterialPageRoute(
+                  builder: (context) => const CreateNotePage(),
+                ),
+              )
+                  .then(
+                (value) async {
+                  homeProvider.getListNote();
+                  homeProvider.enableDelete = false;
+                },
+              );
+            },
+          ),
         );
       },
     );
@@ -190,10 +201,20 @@ class _HomePageState extends State<HomePage> {
               Expanded(
                 child: _searchTextField,
               ),
-              AppButtons(
-                urlBtn: AppImages.icSearch,
-                onTap: () {},
-              )
+              homeProvider.keyWord.isEmpty
+                  ? AppButtons(
+                      urlBtn: AppImages.icSearch,
+                      onTap: () {},
+                    )
+                  : InkWell(
+                      onTap: () {
+                        homeProvider.keyWord = '';
+                        textController.text = '';
+                      },
+                      child: const Icon(
+                        Icons.close,
+                      ),
+                    ),
             ],
           ),
         );
@@ -206,6 +227,9 @@ class _HomePageState extends State<HomePage> {
       builder: (context, homeProvider, child) {
         return TextField(
           controller: textController,
+          onChanged: (key) {
+            homeProvider.saveKeyWord(key);
+          },
           enabled: !homeProvider.enableDelete || !homeProvider.confirmDelete,
           decoration: const InputDecoration(
             contentPadding: EdgeInsets.symmetric(vertical: 10),
@@ -221,10 +245,10 @@ class _HomePageState extends State<HomePage> {
   Widget _buildItemNote({
     required int id,
     required String title,
-    required String createdAt,
-    required String lastEdit,
+    required DateTime createdAt,
+    required DateTime lastEditAt,
     required String content,
-    required isSelectedConfirmDelete,
+    // required int indexSelectedConfirmDelete,
   }) {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
@@ -238,7 +262,7 @@ class _HomePageState extends State<HomePage> {
                         id: id,
                         title: title,
                         createdAt: createdAt,
-                        lastEditAt: lastEdit,
+                        lastEditAt: lastEditAt,
                         content: content,
                       ),
                     ),
@@ -279,8 +303,8 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               _deleteNoteWidget(
-                isSelectedConfirmDelete: isSelectedConfirmDelete,
                 id: id,
+                // index: indexSelectedConfirmDelete,
               ),
             ],
           ),
@@ -290,8 +314,8 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget _deleteNoteWidget({
-    required bool isSelectedConfirmDelete,
     required int id,
+    //required int index,
   }) {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
@@ -336,7 +360,7 @@ class _HomePageState extends State<HomePage> {
                 child: Row(
                   children: [
                     _btnClose,
-                    _btnConfirm(id),
+                    _btnConfirm(id: id),
                   ],
                 ),
               ),
@@ -347,7 +371,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _btnConfirm(int id) {
+  Widget _btnConfirm({required int id}) {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
         return Container(

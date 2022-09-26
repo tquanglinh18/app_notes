@@ -2,7 +2,7 @@ import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
 import '../model/note_entity.dart';
-import 'notes_field.dart';
+import 'notes_properties.dart';
 
 class NotesDatabase {
   static final NotesDatabase instance = NotesDatabase._init();
@@ -34,11 +34,11 @@ class NotesDatabase {
 
     await db.execute('''
 CREATE TABLE $tableNotes ( 
-  ${NoteFields.id} $idType, 
-  ${NoteFields.title} $titleType,
-  ${NoteFields.createdAt} $createdAtType,
-  ${NoteFields.lastEditAt} $lastEditType,
-  ${NoteFields.content} $contentType
+  ${NotesProperties.id} $idType, 
+  ${NotesProperties.title} $titleType,
+  ${NotesProperties.createdAt} $createdAtType,
+  ${NotesProperties.lastEditAt} $lastEditType,
+  ${NotesProperties.content} $contentType
   )
 ''');
   }
@@ -49,48 +49,27 @@ CREATE TABLE $tableNotes (
     return note.copyWith(id: id);
   }
 
-  Future<NoteEntity> readNote(int id) async {
-    final db = await instance.database;
-
-    final maps = await db.query(
-      tableNotes,
-      columns: NoteFields.values,
-      where: '${NoteFields.id} = ?',
-      whereArgs: [id],
-    );
-
-    if (maps.isNotEmpty) {
-      return NoteEntity.fromMap(maps.first);
-    } else {
-      throw Exception('ID $id not found');
-    }
-  }
-
   Future<List<NoteEntity>> readAllNotes() async {
     final db = await instance.database;
-
     final result = await db.query(tableNotes);
-
     return result.map((json) => NoteEntity.fromMap(json)).toList();
   }
 
-  Future<int> update(NoteEntity note) async {
+  Future<int> updateNote(NoteEntity note) async {
     final db = await instance.database;
-
     return db.update(
       tableNotes,
       note.toMap(),
-      where: '${NoteFields.id} = ?',
+      where: '${NotesProperties.id} = ?',
       whereArgs: [note.id],
     );
   }
 
-  Future<int> delete(int id) async {
+  Future<int> deleteNote(int id) async {
     final db = await instance.database;
-
     return await db.delete(
       tableNotes,
-      where: '${NoteFields.id} = ?',
+      where: '${NotesProperties.id} = ?',
       whereArgs: [id],
     );
   }

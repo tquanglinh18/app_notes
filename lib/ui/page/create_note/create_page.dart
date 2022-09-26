@@ -2,6 +2,7 @@ import 'package:app_note_sqflite/model/note_entity.dart';
 import 'package:app_note_sqflite/ui/common/app_buttons.dart';
 import 'package:app_note_sqflite/ui/page/create_note/create_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../common/app_colors.dart';
 import '../../../common/app_images.dart';
@@ -105,7 +106,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
 
   Widget get _createdAt {
     return Text(
-      DateTime.now().toString().split('.').first,
+      DateFormat('d MMM yyyy HH:mm').format(DateTime.now()),
+      //DateTime.now().toString().split('.').first,
       style: const TextStyle(
         color: AppColors.timeTextColor,
         fontWeight: FontWeight.w400,
@@ -148,8 +150,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
           onTap: () {
             NoteEntity note = NoteEntity(
               title: titleController.text,
-              createdAt: DateTime.now().toString().split('.').first,
-              lastEditAt: DateTime.now().toString().split('.').first,
+              createdAt: DateTime.now(),
+              lastEditAt: DateTime.now(),
               content: contentController.text,
             );
             createProvider.createNote(note);

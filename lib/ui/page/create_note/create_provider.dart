@@ -20,5 +20,7 @@ class CreateProvider with ChangeNotifier {
 
   createNote(NoteEntity note) async {
     await NotesDatabase.instance.create(note);
+    notifyListeners();
   }
+
 }

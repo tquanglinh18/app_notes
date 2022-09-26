@@ -1,6 +1,7 @@
 import 'package:app_note_sqflite/model/note_entity.dart';
 import 'package:app_note_sqflite/ui/page/detail/detail_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 
 import '../../../common/app_colors.dart';
@@ -10,8 +11,8 @@ import '../../common/app_buttons.dart';
 class DetailPage extends StatefulWidget {
   final int id;
   final String title;
-  final String createdAt;
-  final String lastEditAt;
+  final DateTime createdAt;
+  final DateTime lastEditAt;
   final String content;
 
   const DetailPage({
@@ -57,7 +58,6 @@ class _DetailPageState extends State<DetailPage> {
                       children: [
                         _titleField,
                         const SizedBox(height: 24),
-                        _createAt,
                         _lastEditAt,
                         const SizedBox(height: 24),
                         Expanded(
@@ -121,20 +121,9 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 
-  Widget get _createAt {
-    return Text(
-      "CreateAt: ${widget.createdAt}",
-      style: const TextStyle(
-        color: AppColors.timeTextColor,
-        fontWeight: FontWeight.w400,
-        fontSize: 12,
-      ),
-    );
-  }
-
   Widget get _lastEditAt {
     return Text(
-      "LastEditAt: ${widget.lastEditAt}",
+      DateFormat('d MMM yyyy HH:mm').format(widget.lastEditAt),
       style: const TextStyle(
         color: AppColors.timeTextColor,
         fontWeight: FontWeight.w400,
@@ -194,7 +183,7 @@ class _DetailPageState extends State<DetailPage> {
                 Navigator.of(context).pop();
               },
             ),
-            !detailProvider.isConfirmDelete ? _optionDeleteOrEdit() : _confirmDelete(),
+            detailProvider.isConfirmDelete ? _confirmDelete() : _optionDeleteOrEdit(),
           ],
         );
       },
@@ -223,7 +212,7 @@ class _DetailPageState extends State<DetailPage> {
                   id: widget.id,
                   title: titleController.text,
                   createdAt: widget.createdAt,
-                  lastEditAt: DateTime.now().toString().split('.').first,
+                  lastEditAt: DateTime.now(),
                   content: contentController.text,
                 );
                 if (detailProvider.isEnableTextField) {
