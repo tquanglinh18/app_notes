@@ -39,6 +39,7 @@ dependencies:
   sqflite: ^2.0.3+1
   path: ^1.8.1
   intl: ^0.17.0
+  another_flushbar: ^1.12.29
 
 dev_dependencies:
   flutter_test:

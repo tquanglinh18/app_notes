@@ -1,5 +1,7 @@
 import 'package:app_note_sqflite/common/app_images.dart';
+import 'package:app_note_sqflite/common/app_text_style.dart';
 import 'package:app_note_sqflite/ui/common/app_buttons.dart';
+import 'package:app_note_sqflite/ui/common/flush_bar.dart';
 import 'package:app_note_sqflite/ui/page/home/home_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -31,20 +33,11 @@ class _HomePageState extends State<HomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
-                    "MY NOTES",
-                    style: TextStyle(
-                      fontSize: 36,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
+                  Text("MY NOTES", style: AppTextStyle.blackS36Bold),
                   _buildSearchBar,
-                  const Text(
+                  Text(
                     "Note List",
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.w500,
-                    ),
+                    style: AppTextStyle.blackS24Bold,
                   ),
                   const SizedBox(
                     height: 15,
@@ -88,7 +81,9 @@ class _HomePageState extends State<HomePage> {
               createdAt: listNotes[index].createdAt,
               lastEditAt: listNotes[index].lastEditAt,
               content: listNotes[index].content,
-              // indexSelectedConfirmDelete: index,
+            ),
+            _deleteNoteWidget(
+              id: listNotes[index].id ?? 0,
             ),
           ],
         );
@@ -103,24 +98,16 @@ class _HomePageState extends State<HomePage> {
   }
 
   Widget get _emptyData {
-    return const Text(
+    return Text(
       "Add your first note please :D",
-      style: TextStyle(
-        color: AppColors.redAccent,
-        fontSize: 18,
-        fontWeight: FontWeight.w400,
-      ),
+      style: AppTextStyle.redAccentS18,
     );
   }
 
   Widget get _emptySearch {
-    return const Text(
+    return Text(
       "Không có dữ liệu tìm kiếm :(",
-      style: TextStyle(
-        color: AppColors.redAccent,
-        fontSize: 18,
-        fontWeight: FontWeight.w400,
-      ),
+      style: AppTextStyle.redAccentS18,
     );
   }
 
@@ -231,11 +218,10 @@ class _HomePageState extends State<HomePage> {
             homeProvider.saveKeyWord(key);
           },
           enabled: !homeProvider.enableDelete || !homeProvider.confirmDelete,
-          decoration: const InputDecoration(
-            contentPadding: EdgeInsets.symmetric(vertical: 10),
+          decoration: InputDecoration(
             hintText: 'Search your note’s title here ...',
             border: InputBorder.none,
-            hintStyle: TextStyle(),
+            hintStyle: AppTextStyle.lightPlaceholderS14,
           ),
         );
       },
@@ -248,7 +234,6 @@ class _HomePageState extends State<HomePage> {
     required DateTime createdAt,
     required DateTime lastEditAt,
     required String content,
-    // required int indexSelectedConfirmDelete,
   }) {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
@@ -268,45 +253,37 @@ class _HomePageState extends State<HomePage> {
                     ),
                   );
           },
-          child: Column(
-            children: [
-              Container(
-                width: MediaQuery.of(context).size.width - 40,
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: AppColors.lightSecondary,
-                  borderRadius: homeProvider.enableDelete || homeProvider.confirmDelete
-                      ? const BorderRadius.only(
-                          topRight: Radius.circular(5),
-                          topLeft: Radius.circular(5),
-                        )
-                      : BorderRadius.circular(5),
+          child: Container(
+            width: MediaQuery.of(context).size.width - 40,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: AppColors.lightSecondary,
+              borderRadius: homeProvider.enableDelete || homeProvider.confirmDelete
+                  ? const BorderRadius.only(
+                      topRight: Radius.circular(5),
+                      topLeft: Radius.circular(5),
+                    )
+                  : BorderRadius.circular(5),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w500,
+                    fontSize: 18,
+                  ),
                 ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontWeight: FontWeight.w500,
-                        fontSize: 18,
-                      ),
-                    ),
-                    const SizedBox(height: 10),
-                    Text(
-                      content,
-                      maxLines: 4,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                const SizedBox(height: 10),
+                Text(
+                  content,
+                  maxLines: 4,
+                  overflow: TextOverflow.ellipsis,
                 ),
-              ),
-              _deleteNoteWidget(
-                id: id,
-                // index: indexSelectedConfirmDelete,
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },
@@ -315,7 +292,6 @@ class _HomePageState extends State<HomePage> {
 
   Widget _deleteNoteWidget({
     required int id,
-    //required int index,
   }) {
     return Consumer<HomeProvider>(
       builder: (context, homeProvider, child) {
@@ -386,7 +362,15 @@ class _HomePageState extends State<HomePage> {
           child: AppButtons(
             onTap: () {
               homeProvider.showConfirmDelete();
-              homeProvider.deleteNote(id);
+              homeProvider.deleteNote(id).then(
+                (value) {
+                  DxFlushBar.showFlushBar(
+                    context,
+                    type: FlushBarType.SUCCESS,
+                    title: "Xoá thành công !",
+                  );
+                },
+              );
             },
             urlBtn: AppImages.icConfirm,
           ),

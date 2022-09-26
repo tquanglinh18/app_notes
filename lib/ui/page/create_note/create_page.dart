@@ -1,3 +1,4 @@
+import 'package:app_note_sqflite/common/app_text_style.dart';
 import 'package:app_note_sqflite/model/note_entity.dart';
 import 'package:app_note_sqflite/ui/common/app_buttons.dart';
 import 'package:app_note_sqflite/ui/page/create_note/create_provider.dart';
@@ -6,6 +7,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import '../../../common/app_colors.dart';
 import '../../../common/app_images.dart';
+import '../../common/flush_bar.dart';
 
 class CreateNotePage extends StatefulWidget {
   const CreateNotePage({Key? key}) : super(key: key);
@@ -62,13 +64,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
           onChanged: (value) {
             createProvider.onChangedContent(value);
           },
-          decoration: const InputDecoration(
-            hintStyle: TextStyle(
-              fontWeight: FontWeight.w400,
-              fontSize: 14,
-              height: 2.1,
-              color: AppColors.timeTextColor,
-            ),
+          decoration: InputDecoration(
+            hintStyle: AppTextStyle.lightPlaceholderS14,
             hintText: 'Write content here ...',
             border: InputBorder.none,
           ),
@@ -90,12 +87,8 @@ class _CreateNotePageState extends State<CreateNotePage> {
             fontWeight: FontWeight.w700,
             color: AppColors.timeTextColor,
           ),
-          decoration: const InputDecoration(
-            hintStyle: TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.w700,
-              color: AppColors.timeTextColor,
-            ),
+          decoration: InputDecoration(
+            hintStyle: AppTextStyle.lightPlaceholderS24Bold,
             hintText: "Write title here ...",
             border: InputBorder.none,
           ),
@@ -107,12 +100,7 @@ class _CreateNotePageState extends State<CreateNotePage> {
   Widget get _createdAt {
     return Text(
       DateFormat('d MMM yyyy HH:mm').format(DateTime.now()),
-      //DateTime.now().toString().split('.').first,
-      style: const TextStyle(
-        color: AppColors.timeTextColor,
-        fontWeight: FontWeight.w400,
-        fontSize: 12,
-      ),
+      style: AppTextStyle.lightPlaceholderS12,
     );
   }
 
@@ -154,7 +142,11 @@ class _CreateNotePageState extends State<CreateNotePage> {
               lastEditAt: DateTime.now(),
               content: contentController.text,
             );
-            createProvider.createNote(note);
+            createProvider.createNote(note).then(
+              (value) {
+                DxFlushBar.showFlushBar(context, type: FlushBarType.SUCCESS, title: "Thêm thành công!");
+              },
+            );
             Navigator.of(context).pop();
           },
         );

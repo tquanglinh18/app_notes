@@ -126,3 +126,4 @@ app.*.symbols
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 !/dev/ci/**/Gemfile.lock
+build/4f2a58af27abc49ecf55570043bbf938.cache.dill.track.dill

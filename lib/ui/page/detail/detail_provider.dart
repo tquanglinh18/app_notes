@@ -17,12 +17,17 @@ class DetailProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  updateNote(NoteEntity note) async {
+  getNote(int id) async {
+    await NotesDatabase.instance.readNote(id);
+    notifyListeners();
+  }
+
+  Future updateNote(NoteEntity note) async {
     await NotesDatabase.instance.updateNote(note);
     notifyListeners();
   }
 
-  deleteNote(int id) async {
+  Future deleteNote(int id) async {
     await NotesDatabase.instance.deleteNote(id);
     notifyListeners();
   }

@@ -1,3 +1,4 @@
+import 'package:app_note_sqflite/common/app_text_style.dart';
 import 'package:app_note_sqflite/model/note_entity.dart';
 import 'package:app_note_sqflite/ui/page/detail/detail_provider.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:provider/provider.dart';
 import '../../../common/app_colors.dart';
 import '../../../common/app_images.dart';
 import '../../common/app_buttons.dart';
+import '../../common/flush_bar.dart';
 
 class DetailPage extends StatefulWidget {
   final int id;
@@ -112,10 +114,7 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ),
           ),
-          style: const TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.w700,
-          ),
+          style: AppTextStyle.blackS24Bold,
         );
       },
     );
@@ -162,10 +161,7 @@ class _DetailPageState extends State<DetailPage> {
               ),
             ),
           ),
-          style: const TextStyle(
-            fontWeight: FontWeight.w400,
-            fontSize: 14,
-          ),
+          style: AppTextStyle.blackS24Bold,
         );
       },
     );
@@ -216,7 +212,11 @@ class _DetailPageState extends State<DetailPage> {
                   content: contentController.text,
                 );
                 if (detailProvider.isEnableTextField) {
-                  await detailProvider.updateNote(note);
+                  await detailProvider.updateNote(note).then(
+                    (value) {
+                      DxFlushBar.showFlushBar(context, type: FlushBarType.SUCCESS, title: "Sửa thành công!");
+                    },
+                  );
                   detailProvider.enableTextField();
                 } else {
                   detailProvider.enableTextField();
@@ -244,7 +244,9 @@ class _DetailPageState extends State<DetailPage> {
             AppButtons(
               urlBtn: AppImages.btnConfirm,
               onTap: () async {
-                detailProvider.deleteNote(widget.id);
+                detailProvider.deleteNote(widget.id).then((value) {
+                  DxFlushBar.showFlushBar(context, type: FlushBarType.SUCCESS, title: "Xoá thành công!");
+                });
                 Navigator.of(context).pop();
               },
             ),

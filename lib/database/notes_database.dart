@@ -20,6 +20,7 @@ class NotesDatabase {
 
   Future<Database> _initDB(String filePath) async {
     final dbPath = await getDatabasesPath();
+
     final path = join(dbPath, filePath);
 
     return await openDatabase(path, version: 1, onCreate: _createDB);
@@ -33,20 +34,37 @@ class NotesDatabase {
     const contentType = 'TEXT NOT NULL';
 
     await db.execute('''
-CREATE TABLE $tableNotes ( 
-  ${NotesProperties.id} $idType, 
-  ${NotesProperties.title} $titleType,
-  ${NotesProperties.createdAt} $createdAtType,
-  ${NotesProperties.lastEditAt} $lastEditType,
-  ${NotesProperties.content} $contentType
-  )
-''');
+      CREATE TABLE $tableNotes ( 
+        ${NotesProperties.id} $idType, 
+        ${NotesProperties.title} $titleType,
+        ${NotesProperties.createdAt} $createdAtType,
+        ${NotesProperties.lastEditAt} $lastEditType,
+        ${NotesProperties.content} $contentType
+        )
+      ''');
   }
 
-  Future<NoteEntity> create(NoteEntity note) async {
+  Future<NoteEntity> createNote(NoteEntity note) async {
     final db = await instance.database;
     final id = await db.insert(tableNotes, note.toMap());
     return note.copyWith(id: id);
+  }
+
+  Future<NoteEntity> readNote(int id) async {
+    final db = await instance.database;
+
+    final maps = await db.query(
+      tableNotes,
+      columns: NotesProperties.values,
+      where: '${NotesProperties.id} = ?',
+      whereArgs: [id],
+    );
+
+    if (maps.isNotEmpty) {
+      return NoteEntity.fromMap(maps.first);
+    } else {
+      throw Exception('ID $id not found');
+    }
   }
 
   Future<List<NoteEntity>> readAllNotes() async {

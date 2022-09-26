@@ -18,8 +18,8 @@ class CreateProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  createNote(NoteEntity note) async {
-    await NotesDatabase.instance.create(note);
+  Future createNote(NoteEntity note) async {
+    await NotesDatabase.instance.createNote(note);
     notifyListeners();
   }
 
