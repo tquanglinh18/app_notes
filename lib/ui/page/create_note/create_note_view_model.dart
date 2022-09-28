@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../database/notes_database.dart';
 
-class CreateProvider with ChangeNotifier {
+class CreateNoteViewModel with ChangeNotifier {
   String title = '';
   String content = '';
   bool isActive = false;

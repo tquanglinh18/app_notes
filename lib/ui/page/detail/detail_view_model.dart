@@ -2,10 +2,12 @@ import 'package:app_note_sqflite/database/notes_database.dart';
 import 'package:app_note_sqflite/model/note_entity.dart';
 import 'package:flutter/material.dart';
 
-class DetailProvider with ChangeNotifier {
+class DetailViewModel with ChangeNotifier {
   bool isEnableTextField = false;
 
   bool isConfirmDelete = false;
+
+  NoteEntity? note ;
 
   enableTextField() {
     isEnableTextField = !isEnableTextField;

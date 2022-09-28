@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../database/notes_database.dart';
 
-class HomeProvider with ChangeNotifier {
+class HomeViewModel with ChangeNotifier {
   bool enableDelete = false;
 
   bool confirmDelete = false;
@@ -29,7 +29,7 @@ class HomeProvider with ChangeNotifier {
     notifyListeners();
   }
 
-  getListNote() async {
+  Future getListNote() async {
     await NotesDatabase.instance.readAllNotes().then(
       (value) {
         if ((keyWord).isNotEmpty) {
