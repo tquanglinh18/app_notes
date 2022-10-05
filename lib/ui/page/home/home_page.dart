@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
                   "MY NOTES",
                   style: AppTextStyle.blackS36Bold,
                 ),
-                _buildSearchBar,
+                _searchBar,
                 Text(
                   "Note List",
                   style: AppTextStyle.blackS24Bold,
@@ -64,7 +64,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _notEmptyData(List<NoteEntity> listNotes) {
+  Widget _notEmptyData(
+    List<NoteEntity> listNotes,
+  ) {
     return ListView.separated(
       padding: EdgeInsets.zero,
       itemBuilder: (context, index) {
@@ -77,9 +79,7 @@ class _HomePageState extends State<HomePage> {
               lastEditAt: listNotes[index].lastEditAt,
               content: listNotes[index].content,
             ),
-            _deleteNoteWidget(
-              id: listNotes[index].id ?? 0,
-            ),
+            _deleteNoteItem(index: index, id: listNotes[index].id ?? 0),
           ],
         );
       },
@@ -89,6 +89,62 @@ class _HomePageState extends State<HomePage> {
         );
       },
       itemCount: listNotes.length,
+    );
+  }
+
+  Widget _deleteNoteItem({
+    required int index,
+    required int id,
+  }) {
+    return Stack(
+      children: [
+        Visibility(
+          visible: context.watch<HomeViewModel>().enableDelete,
+          child: Container(
+            height: 50,
+            width: MediaQuery.of(context).size.width - 40,
+            decoration: BoxDecoration(
+              color: AppColors.redAccent,
+              borderRadius: context.watch<HomeViewModel>().enableDelete
+                  ? const BorderRadius.only(
+                      bottomRight: Radius.circular(5),
+                      bottomLeft: Radius.circular(5),
+                    )
+                  : BorderRadius.circular(5),
+            ),
+            child: AppButtons(
+              onTap: () {
+                context.read<HomeViewModel>().showConfirmDelete();
+                context.read<HomeViewModel>().changeSelectedIndex(index);
+              },
+              urlBtn: AppImages.icDelete,
+            ),
+          ),
+        ),
+        Visibility(
+          visible:
+              context.watch<HomeViewModel>().confirmDelete && context.watch<HomeViewModel>().selectedIndex == index,
+          child: Container(
+            height: 50,
+            width: (MediaQuery.of(context).size.width - 40),
+            decoration: BoxDecoration(
+              color: AppColors.redAccent,
+              borderRadius: context.watch<HomeViewModel>().confirmDelete
+                  ? const BorderRadius.only(
+                      bottomRight: Radius.circular(5),
+                      bottomLeft: Radius.circular(5),
+                    )
+                  : BorderRadius.circular(5),
+            ),
+            child: Row(
+              children: [
+                _btnClose,
+                _btnConfirm(id: id),
+              ],
+            ),
+          ),
+        ),
+      ],
     );
   }
 
@@ -156,7 +212,7 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget get _buildSearchBar {
+  Widget get _searchBar {
     return Container(
       height: 52,
       width: MediaQuery.of(context).size.width - 40,
@@ -260,59 +316,6 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
       ),
-    );
-  }
-
-  Widget _deleteNoteWidget({
-    required int id,
-  }) {
-    return Stack(
-      children: [
-        Visibility(
-          visible: context.watch<HomeViewModel>().enableDelete,
-          child: Container(
-            height: 50,
-            width: MediaQuery.of(context).size.width - 40,
-            decoration: BoxDecoration(
-              color: AppColors.redAccent,
-              borderRadius: context.watch<HomeViewModel>().enableDelete
-                  ? const BorderRadius.only(
-                      bottomRight: Radius.circular(5),
-                      bottomLeft: Radius.circular(5),
-                    )
-                  : BorderRadius.circular(5),
-            ),
-            child: AppButtons(
-              onTap: () {
-                context.read<HomeViewModel>().showConfirmDelete();
-              },
-              urlBtn: AppImages.icDelete,
-            ),
-          ),
-        ),
-        Visibility(
-          visible: context.watch<HomeViewModel>().confirmDelete,
-          child: Container(
-            height: 50,
-            width: (MediaQuery.of(context).size.width - 40),
-            decoration: BoxDecoration(
-              color: AppColors.redAccent,
-              borderRadius: context.watch<HomeViewModel>().confirmDelete
-                  ? const BorderRadius.only(
-                      bottomRight: Radius.circular(5),
-                      bottomLeft: Radius.circular(5),
-                    )
-                  : BorderRadius.circular(5),
-            ),
-            child: Row(
-              children: [
-                _btnClose,
-                _btnConfirm(id: id),
-              ],
-            ),
-          ),
-        ),
-      ],
     );
   }
 

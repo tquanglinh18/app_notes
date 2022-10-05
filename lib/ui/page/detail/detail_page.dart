@@ -169,7 +169,7 @@ class _DetailPageState extends State<DetailPage> {
         const SizedBox(width: 20),
         AppButtons(
           urlBtn: context.read<DetailViewModel>().isEnableTextField ? AppImages.btnSaveActive : AppImages.btnEdit,
-          onTap: () {
+          onTap: () async {
             if (context.read<DetailViewModel>().isEnableTextField) {
               NoteEntity note = NoteEntity(
                 id: widget.id,
@@ -227,3 +227,4 @@ class _DetailPageState extends State<DetailPage> {
     );
   }
 }
+

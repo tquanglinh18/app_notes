@@ -10,6 +10,8 @@ class HomeViewModel with ChangeNotifier {
 
   bool isSelectedConfirmDelete = false;
 
+  int selectedIndex = 0;
+
   String keyWord = '';
 
   List<NoteEntity> listNote = [];
@@ -26,6 +28,11 @@ class HomeViewModel with ChangeNotifier {
 
   saveKeyWord(String key) {
     keyWord = key;
+    notifyListeners();
+  }
+
+  changeSelectedIndex(int index) {
+    selectedIndex = index;
     notifyListeners();
   }
 
